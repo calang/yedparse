@@ -1,5 +1,6 @@
-/** readit - 
+/** readit - Read graph information from a yEd graphml file
  * 
+ * @author Carlos Lang-Sanou
  * 
  */
 
@@ -31,12 +32,12 @@ interpret_graphml_element_list(Graphml_element_list) :-
 interpret_graph_element_list([]).
 
 interpret_graph_element_list([H|T]) :-
-    once(interpret_graph_element(H)),
+    interpret_graph_element(H),
     interpret_graph_element_list(T).
 
 
 % Interpret graph element: node
-interpret_graph_element( element(node, Node_props, Node_elements) ) :-
+interpret_graph_element( element(node, Node_props, Node_elements) ) :- !,
     memberchk(id=Node_id, Node_props),
     member(element(data, Data_props, Data_elements), Node_elements),
     member(element('y:ImageNode', _image_props, Image_elements ), Data_elements),
@@ -46,7 +47,7 @@ interpret_graph_element( element(node, Node_props, Node_elements) ) :-
 
 
 % Interpret graph element: edge
-interpret_graph_element( element(edge, Edge_props, Edge_elements) ) :-
+interpret_graph_element( element(edge, Edge_props, Edge_elements) ) :- !,
     memberchk(id=Edge_id, Edge_props),
     memberchk(source=Source_id, Edge_props),
     memberchk(target=Target_id, Edge_props),
