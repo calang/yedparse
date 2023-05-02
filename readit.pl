@@ -68,3 +68,22 @@ interpret_graph_element( element(edge, Edge_props, Edge_elements) ) :- !,
     writeln(edge(Edge_id, Source_id, Target_id, Edge_label)).
 
 interpret_graph_element(_).
+
+
+%! key(++Elements:list, +Key_name:atom, -Key) is det.
+% Extract the Key associated with a Key_Name
+%
+% @arg Elements list of graphml elements
+% @arg Key_name one of node_description, node_graphics, ...
+key(Elements, node_description, Key) :-
+    memberchk(element(key, Key_props, _), Elements),
+    memberchk(for=node, Key_props),
+    memberchk('attr.name'=description, Key_props),
+    memberchk(id=Key, Key_props).
+
+key(Elements, node_graphics, Key) :-
+    memberchk(element(key, Key_props, _), Elements),
+    memberchk(for=node, Key_props),
+    memberchk('yfiles.type'=nodegraphics, Key_props),
+    memberchk(id=Key, Key_props).
+
