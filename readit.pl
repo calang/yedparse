@@ -13,15 +13,15 @@ dump_graph :-
     open('graph.pl', write, Out),
         print_term(Graphml, [output(Out)]),
         flush_output(Out),    
-    close(Out),
-    writeln(ya).
+    close(Out).
 
 
 %! run is det
 % Load the file and print the graph information.
 run :-
     load_html('basic.graphml', [Graphml], []),
-    interpret_graphml(Graphml).
+    interpret_graphml(Graphml),
+    !.
 
 
 %! interpret_graphml(++Element:term) is det
@@ -37,9 +37,7 @@ interpret_graphml( element(graphml, _Graphml_prop_list, Graphml_element_list) ) 
 %
 % @arg Graphml_element_list - list of graphml elements
 interpret_graphml_element_list(Graphml_element_list) :-
-    % writeln('--- interpret_graphml_element_list ---'),
     keys(Graphml_element_list, Key_list),
-    % format('Key_list: ~w~n', [Key_list]),
     memberchk(element(graph, _Graph_prop_list, Graph_element_list), Graphml_element_list),
     interpret_graph_element_list(Graph_element_list, Key_list).
 
@@ -49,13 +47,11 @@ interpret_graphml_element_list(Graphml_element_list) :-
 %
 % @arg Element_list list of graph elements
 % @arg Key_list list of key(From, Attr, Key)
-interpret_graph_element_list([], _).
-
-interpret_graph_element_list([H|T], Keys) :-
-    % writeln('--- interpret_graph_element_list ---'),
-    % format('H: ~w~n', [H]),
+interpret_graph_element_list([H|T], Keys) :- !,
     interpret_graph_element(H, Keys),
     interpret_graph_element_list(T, Keys).
+
+interpret_graph_element_list([], _).
 
 
 %! interpret_graph_element( ++Element:term, ++Key_list:list ) is det.

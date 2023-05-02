@@ -36,9 +36,9 @@ For the extraction and interpretation, [SWI-Prolog](https://www.swi-prolog.org/)
 ### basic.graphml, read by readit.pl
 
 ## To do
-- introduce a final catch returning '' when an optional property is not found (e.g. node without label).
-- introduce a final catch raising an exception when a mandatory property is not found (e.g. edge without source).
 - remove unnecessary backtrack points
+- introduce a final catch returning '' (or not adding the feature) when an optional property is not found (e.g. node without label).
+- introduce a final catch raising an exception when a mandatory property is not found (e.g. edge without source).
 - alter the current predicates so that instead of "printing" the graph structure they returns a parsed graph term
 - transform the readit.pl script into a module with a predicate that imports graph features from a given graph file
 - enable the predicates to read and compile additional interesting properties of nodes and edges
