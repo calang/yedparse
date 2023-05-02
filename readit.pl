@@ -29,37 +29,49 @@ run :-
 %
 % @arg Element term of the form element(graphml, _Graphml_prop_list, Graphml_element_list)
 interpret_graphml( element(graphml, _Graphml_prop_list, Graphml_element_list) ) :-
-    interpret_graphml_element_list(Graphml_element_list).
+    interpret_graphml_element_list(Graphml_element_list, Term_list),
+    print_term(Term_list, []).
 
 
-%! interpret_graphml_element_list(++Graphml_element_list:list) is det
+%! interpret_graphml_element_list(++Graphml_element_list:list,-Term_list:list) is det
 % Interpret the list of elements within a graphml.
 %
 % @arg Graphml_element_list - list of graphml elements
-interpret_graphml_element_list(Graphml_element_list) :-
+% @arg Term_list list of terms extracted from the graphml
+interpret_graphml_element_list(Graphml_element_list, Term_list) :-
     keys(Graphml_element_list, Key_list),
     memberchk(element(graph, _Graph_prop_list, Graph_element_list), Graphml_element_list),
-    interpret_graph_element_list(Graph_element_list, Key_list).
+    interpret_graph_element_list(Graph_element_list, Key_list, Term_list).
 
 
-%! interpret_graph_element_list(++Element_list:list, ++Key_list:list) is det
+%! interpret_graph_element_list(++Element_list:list, ++Key_list:list, -Term_list:list) is det
 % Interpret the list of graph elements.
 %
 % @arg Element_list list of graph elements
 % @arg Key_list list of key(From, Attr, Key)
-interpret_graph_element_list([H|T], Keys) :- !,
-    interpret_graph_element(H, Keys),
-    interpret_graph_element_list(T, Keys).
+% @arg Term_list list of terms extracted from the Element_list
+interpret_graph_element_list(Element_list, Keys, Term_list) :-
+    findall(
+        Term,
+        (
+            member(Element, Element_list),
+            interpret_graph_element(Element, Keys, Term)
+        ),
+        Term_list
+    ).
 
-interpret_graph_element_list([], _).
 
-
-%! interpret_graph_element( ++Element:term, ++Key_list:list ) is det.
+%! interpret_graph_element( ++Element:term, ++Key_list:list, -Term ) is det.
 % Extract and print the features of a graph Element.
 %
 % @arg Element term to be evaluated
 % @arg Key_list list of key(From, Attr, Key)
-interpret_graph_element( element(node, Node_props, Node_elements), Key_list ) :- !,
+% @arg Term term produced from interpreting the Element
+interpret_graph_element(
+    element(node, Node_props, Node_elements),
+    Key_list,
+    node(Node_id, Node_label, Node_description)
+) :- !,
     memberchk(id=Node_id, Node_props),
 
     memberchk(key(node, description, Key_node_description), Key_list),
@@ -69,10 +81,13 @@ interpret_graph_element( element(node, Node_props, Node_elements), Key_list ) :-
     data(Key_nodegraphics, Node_elements, Nodegraphics_elements),
 
     member(element('y:ImageNode', _Image_props, Image_elements ), Nodegraphics_elements),
-    member(element('y:NodeLabel', _Label_props, [Node_label]), Image_elements),
-    writeln(node(Node_id, Node_label, Node_description)).
+    member(element('y:NodeLabel', _Label_props, [Node_label]), Image_elements).
 
-interpret_graph_element( element(edge, Edge_props, Edge_elements), Key_list ) :- !,
+interpret_graph_element(
+    element(edge, Edge_props, Edge_elements),
+    Key_list,
+    edge(Edge_id, Source_id, Target_id, Edge_label)
+) :- !,
     memberchk(id=Edge_id, Edge_props),
     memberchk(source=Source_id, Edge_props),
     memberchk(target=Target_id, Edge_props),
@@ -85,10 +100,7 @@ interpret_graph_element( element(edge, Edge_props, Edge_elements), Key_list ) :-
 
     member(element(_Edge_type, _Edge_type_props, Edge_type_elements), Edgegraphics_elements),
     member(element('y:EdgeLabel', _Label_props, Label_elements), Edge_type_elements),
-    member(Edge_label, Label_elements), atomic(Edge_label),
-    writeln(edge(Edge_id, Source_id, Target_id, Edge_label)).
-
-interpret_graph_element(_,_).
+    member(Edge_label, Label_elements), atomic(Edge_label).
 
 
 %! data(+Key:atom, ++Elements, -Sub_elements) is det
