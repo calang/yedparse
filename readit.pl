@@ -77,10 +77,12 @@ interpret_graph_element( element(edge, Edge_props, Edge_elements), Key_list ) :-
     % memberchk(key(edge, description, Key_edge_description), Key_list),
     % data(Key_edge_description, Node_elements, [Node_description]),
 
-    member(element(data, _Data_props, Data_elements), Edge_elements),
-    member(element(_Edge_type, _Edge_type_props, Edge_type_elements), Data_elements),
+    memberchk(key(edge, edgegraphics, Key_edgeraphics), Key_list),
+    data(Key_edgeraphics, Edge_elements, Edgegraphics_elements),
+
+    member(element(_Edge_type, _Edge_type_props, Edge_type_elements), Edgegraphics_elements),
     member(element('y:EdgeLabel', _Label_props, Label_elements), Edge_type_elements),
-    member(Edge_label, Label_elements), atom(Edge_label),
+    member(Edge_label, Label_elements), atomic(Edge_label),
     writeln(edge(Edge_id, Source_id, Target_id, Edge_label)).
 
 interpret_graph_element(_,_).
