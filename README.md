@@ -37,6 +37,7 @@ For the extraction and interpretation, [SWI-Prolog](https://www.swi-prolog.org/)
 
 ## To do
 - alter the current predicates so that instead of "printing" the graph structure they returns a parsed graph term
+- pull graph features by key element types (e.g. d5, d6), for more precise extractions
 - capture the type of node, from the node data Description
 - enable the predicates to read and compile additional interesting properties of nodes and edges
 - transform the readit.pl script into a module with a predicate that imports graph features from a given graph file

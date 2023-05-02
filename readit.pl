@@ -6,9 +6,13 @@
 
 
 % Show the parsed structure of the whole file.
-show_full :-
+dump_graph :-
     load_html('basic.graphml', Graphml, []),
-    print_term(Graphml,[]).
+    open('graph.pl', write, Out),
+        print_term(Graphml, [output(Out)]),
+        flush_output(Out),    
+    close(Out),
+    writeln(ya).
 
 
 % Load the file and extract the graph information.
