@@ -35,7 +35,9 @@ For the extraction and interpretation, [SWI-Prolog](https://www.swi-prolog.org/)
 ## Examples
 ### basic.graphml, read by readit.pl
 
-## To be done
-- alter the current predicates so that instead of "printing" the graph structure it returns a parsed graph term
-- transform the readit.pl script in a module with a predicate that imports graph features from a given graph file
+## To do
+- alter the current predicates so that instead of "printing" the graph structure they returns a parsed graph term
+- capture the type of node, from the node data Description
+- enable the predicates to read and compile additional interesting properties of nodes and edges
+- transform the readit.pl script into a module with a predicate that imports graph features from a given graph file
 
