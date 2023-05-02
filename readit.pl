@@ -146,5 +146,3 @@ key(Elements, For, Attr_name, Key) :-
     ),
     member(id=Key, Key_props),
     !.
-
-
