@@ -34,7 +34,10 @@ interpret_graphml_element_list(Graphml_element_list) :-
     interpret_graph_element_list(Graph_element_list).
 
 
-% Interpret the list of elements within a graph.
+%! interpret_graph_element_list(++List:list).
+% Interpret the list of graph elements.
+%
+% @arg List list of graph elements
 interpret_graph_element_list([]).
 
 interpret_graph_element_list([H|T]) :-
@@ -42,7 +45,10 @@ interpret_graph_element_list([H|T]) :-
     interpret_graph_element_list(T).
 
 
-% Interpret graph element: node
+%! interpret_graph_element( ++Element:term ) is det.
+% Extract and print the features of a graph Element.
+%
+% @arg Element term to be evaluated
 interpret_graph_element( element(node, Node_props, Node_elements) ) :- !,
     memberchk(id=Node_id, Node_props),
     member(element(data, _Data_props, Data_elements), Node_elements),
@@ -51,8 +57,6 @@ interpret_graph_element( element(node, Node_props, Node_elements) ) :- !,
     member(Node_label, Label_elements),
     writeln(node(Node_id, Node_label)).
 
-
-% Interpret graph element: edge
 interpret_graph_element( element(edge, Edge_props, Edge_elements) ) :- !,
     memberchk(id=Edge_id, Edge_props),
     memberchk(source=Source_id, Edge_props),
@@ -63,6 +67,4 @@ interpret_graph_element( element(edge, Edge_props, Edge_elements) ) :- !,
     member(Edge_label, Label_elements), atom(Edge_label),
     writeln(edge(Edge_id, Source_id, Target_id, Edge_label)).
 
-
-% Interpret graph element: any other.
 interpret_graph_element(_).
