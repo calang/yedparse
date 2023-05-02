@@ -30,9 +30,9 @@ interpret_graphml( element(graphml, _Graphml_prop_list, Graphml_element_list) ) 
 
 % Interpret the list of elements within a graphml.
 interpret_graphml_element_list(Graphml_element_list) :-
-    writeln('--- interpret_graphml_element_list ---'),
+    % writeln('--- interpret_graphml_element_list ---'),
     keys(Graphml_element_list, Key_list),
-    format('Key_list: ~w~n', [Key_list]),
+    % format('Key_list: ~w~n', [Key_list]),
     memberchk(element(graph, _Graph_prop_list, Graph_element_list), Graphml_element_list),
     interpret_graph_element_list(Graph_element_list, Key_list).
 
@@ -45,8 +45,8 @@ interpret_graphml_element_list(Graphml_element_list) :-
 interpret_graph_element_list([], _).
 
 interpret_graph_element_list([H|T], Keys) :-
-    writeln('--- interpret_graph_element_list ---'),
-    format('H: ~w~n', [H]),
+    % writeln('--- interpret_graph_element_list ---'),
+    % format('H: ~w~n', [H]),
     interpret_graph_element(H, Keys),
     interpret_graph_element_list(T, Keys).
 
@@ -57,34 +57,39 @@ interpret_graph_element_list([H|T], Keys) :-
 % @arg Element term to be evaluated
 % @agr Key_list list of key(From, Attr, Key)
 interpret_graph_element( element(node, Node_props, Node_elements), Key_list ) :- !,
-    writeln('--- interpret_graph_element ---'),
-    format('Key_list: ~w~n', [Key_list]),
     memberchk(id=Node_id, Node_props),
-    % memberchk(key(node, description, Key_node_description), Key_list),
-    % data(Key_node_description, Node_elements, Node_description),
 
-    member(element(data, _Data_props, Data_elements), Node_elements),
-    member(element('y:ImageNode', _Image_props, Image_elements ), Data_elements),
-    member(element('y:NodeLabel', _Label_props, Label_elements), Image_elements),
-    member(Node_label, Label_elements),
+    memberchk(key(node, description, Key_node_description), Key_list),
+    data(Key_node_description, Node_elements, [Node_description]),
+
+    memberchk(key(node, nodegraphics, Key_nodegraphics), Key_list),
+    data(Key_nodegraphics, Node_elements, Nodegraphics_elements),
+
+    member(element('y:ImageNode', _Image_props, Image_elements ), Nodegraphics_elements),
+    member(element('y:NodeLabel', _Label_props, [Node_label]), Image_elements),
     writeln(node(Node_id, Node_label, Node_description)).
-
-data(Key, Elements, Sub_elements) :-
-    member(element(data, Props, Sub_elements), Elements),
-    member([key=Key], Props),
-    !.
 
 interpret_graph_element( element(edge, Edge_props, Edge_elements), Key_list ) :- !,
     memberchk(id=Edge_id, Edge_props),
     memberchk(source=Source_id, Edge_props),
     memberchk(target=Target_id, Edge_props),
+
+    % memberchk(key(edge, description, Key_edge_description), Key_list),
+    % data(Key_edge_description, Node_elements, [Node_description]),
+
     member(element(data, _Data_props, Data_elements), Edge_elements),
     member(element(_Edge_type, _Edge_type_props, Edge_type_elements), Data_elements),
     member(element('y:EdgeLabel', _Label_props, Label_elements), Edge_type_elements),
     member(Edge_label, Label_elements), atom(Edge_label),
     writeln(edge(Edge_id, Source_id, Target_id, Edge_label)).
 
-interpret_graph_element(_, _).
+interpret_graph_element(_,_).
+
+
+data(Key, Elements, Sub_elements) :-
+    member(element(data, Props, Sub_elements), Elements),
+    member(key=Key, Props),
+    !.
 
 
 %! keys(++Elements:list, -Keys:list) :-
