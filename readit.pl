@@ -89,13 +89,7 @@ graph_element_term(
     memberchk(id=Edge_id, Edge_props),
     memberchk(source=Source_id, Edge_props),
     memberchk(target=Target_id, Edge_props),
-
-    memberchk(key(edge, edgegraphics, Key_edgegraphics), Attr_key_list),
-    data(Key_edgegraphics, Edge_elements, Edgegraphics_elements),
-
-    member(element(_Graphic_type, _Graphic_type_props, Graphic_type_elements), Edgegraphics_elements),
-    member(element('y:EdgeLabel', _Label_props, Label_elements), Graphic_type_elements),
-    member(Edge_label, Label_elements), atomic(Edge_label).
+    edge_label(Edge_elements, Edge_label, Attr_key_list).
 
 
 %! node_description(++Node_element_list:list, -Node_description:string, ++Attr_key_list) is det
@@ -125,7 +119,28 @@ node_label(Node_element_list, Node_label, Attr_key_list) :-
         data(Key_nodegraphics, Node_element_list, Nodegraphics_elements),
         member(element('y:ImageNode', _Image_props, Image_elements ), Nodegraphics_elements),
         member(element('y:NodeLabel', _Label_props, [Node_label]), Image_elements)
-    ;   Node_label = ""
+    ;
+        Node_label = ""
+    ),
+    !.
+
+%! edge_label(Edge_element_list, Edge_label, Attr_key_list).
+% Edge_label is the edge label found in Edge_element_list
+% where Attr_key_list is used to 
+%
+% @arg Edge_element_list list of elements describing the node
+% @arg Edge_label label for the node
+% @arg Attr_key_list list of attribute keys to be used for reference
+edge_label(Edge_element_list, Edge_label, Attr_key_list) :-
+    memberchk(key(edge, edgegraphics, Key_edgegraphics), Attr_key_list),
+    (
+        data(Key_edgegraphics, Edge_element_list, Edgegraphics_elements),
+        member(element(_Graphic_type, _Graphic_type_props, Graphic_type_elements), Edgegraphics_elements),
+        member(element('y:EdgeLabel', _Label_props, Label_elements), Graphic_type_elements),
+        member(Edge_label_1, Label_elements),
+        normalize_space(atom(Edge_label),Edge_label_1)
+    ;
+        Edge_label = ''
     ),
     !.
 
