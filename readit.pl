@@ -56,51 +56,49 @@ interpret_graph_element_list(Element_list, Keys, Term_list) :-
         Term,
         (
             member(Element, Element_list),
-            interpret_graph_element(Element, Keys, Term)
+            graph_element_term(Element, Keys, Term)
         ),
         Term_list
     ).
 
 
-%! interpret_graph_element( ++Element:term, ++Key_list:list, -Term ) is det.
-% Extract and print the features of a graph Element.
+%! graph_element_term( ++Element:term, ++Attr_key_list:list, -Term ) is det.
+% Term is the term that corresponds to Element.
 %
-% @arg Element term to be evaluated
-% @arg Key_list list of key(From, Attr, Key)
-% @arg Term term produced from interpreting the Element
-interpret_graph_element(
+% @arg Element graph element
+% @arg Attr_key_list list of element attribute keys of the form key(From, Attr, Key)
+% @arg Term term corresponding to Element
+% node(Node_id:atom, Node_label:string, Node_description:string)
+graph_element_term(
     element(node, Node_props, Node_elements),
-    Key_list,
+    Attr_key_list,
     node(Node_id, Node_label, Node_description)
 ) :- !,
     memberchk(id=Node_id, Node_props),
-
-    memberchk(key(node, description, Key_node_description), Key_list),
+    memberchk(key(node, description, Key_node_description), Attr_key_list),
     data(Key_node_description, Node_elements, [Node_description]),
 
-    memberchk(key(node, nodegraphics, Key_nodegraphics), Key_list),
+    memberchk(key(node, nodegraphics, Key_nodegraphics), Attr_key_list),
     data(Key_nodegraphics, Node_elements, Nodegraphics_elements),
 
     member(element('y:ImageNode', _Image_props, Image_elements ), Nodegraphics_elements),
     member(element('y:NodeLabel', _Label_props, [Node_label]), Image_elements).
 
-interpret_graph_element(
+% edge(Edge_id:atom, Source_id:atom, Target_id:atom, Edge_label:string)
+graph_element_term(
     element(edge, Edge_props, Edge_elements),
-    Key_list,
+    Attr_key_list,
     edge(Edge_id, Source_id, Target_id, Edge_label)
 ) :- !,
     memberchk(id=Edge_id, Edge_props),
     memberchk(source=Source_id, Edge_props),
     memberchk(target=Target_id, Edge_props),
 
-    % memberchk(key(edge, description, Key_edge_description), Key_list),
-    % data(Key_edge_description, Node_elements, [Node_description]),
+    memberchk(key(edge, edgegraphics, Key_edgegraphics), Attr_key_list),
+    data(Key_edgegraphics, Edge_elements, Edgegraphics_elements),
 
-    memberchk(key(edge, edgegraphics, Key_edgeraphics), Key_list),
-    data(Key_edgeraphics, Edge_elements, Edgegraphics_elements),
-
-    member(element(_Edge_type, _Edge_type_props, Edge_type_elements), Edgegraphics_elements),
-    member(element('y:EdgeLabel', _Label_props, Label_elements), Edge_type_elements),
+    member(element(_Graphic_type, _Graphic_type_props, Graphic_type_elements), Edgegraphics_elements),
+    member(element('y:EdgeLabel', _Label_props, Label_elements), Graphic_type_elements),
     member(Edge_label, Label_elements), atomic(Edge_label).
 
 
