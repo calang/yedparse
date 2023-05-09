@@ -21,17 +21,17 @@ dump_graph :-
 % Load the file and print the graph information.
 run :-
     load_html('basic.graphml', [Graphml], []),
-    interpret_graphml(Graphml),
+    graphml_term_list(Graphml, Term_list),
+    print_term(Term_list, []),
     !.
 
 
-%! interpret_graphml(++Element:term) is det
+%! graphml_term_list(++Element:term) is det
 % Interpret the parsed Element structure for the whole graphml file.
 %
 % @arg Element term of the form element(graphml, _Graphml_prop_list, Element_list)
-interpret_graphml( element(graphml, _Graphml_prop_list, Element_list) ) :-
-    element_list_term_list(Element_list, Term_list),
-    print_term(Term_list, []).
+graphml_term_list( element(graphml, _Graphml_prop_list, Element_list), Term_list ) :-
+    element_list_term_list(Element_list, Term_list).
 
 
 %! element_list_term_list(++Element_list:list,-Term_list:list) is det
