@@ -76,14 +76,9 @@ graph_element_term(
     node(Node_id, Node_label, Node_description)
 ) :- !,
     memberchk(id=Node_id, Node_props),
-    memberchk(key(node, description, Key_node_description), Attr_key_list),
-    data(Key_node_description, Node_elements, [Node_description]),
+    node_description(Node_elements, Node_description, Attr_key_list),
+    node_label(Node_elements, Node_label, Attr_key_list).
 
-    memberchk(key(node, nodegraphics, Key_nodegraphics), Attr_key_list),
-    data(Key_nodegraphics, Node_elements, Nodegraphics_elements),
-
-    member(element('y:ImageNode', _Image_props, Image_elements ), Nodegraphics_elements),
-    member(element('y:NodeLabel', _Label_props, [Node_label]), Image_elements).
 
 % edge(Edge_id:atom, Source_id:atom, Target_id:atom, Edge_label:string)
 graph_element_term(
@@ -101,6 +96,38 @@ graph_element_term(
     member(element(_Graphic_type, _Graphic_type_props, Graphic_type_elements), Edgegraphics_elements),
     member(element('y:EdgeLabel', _Label_props, Label_elements), Graphic_type_elements),
     member(Edge_label, Label_elements), atomic(Edge_label).
+
+
+%! node_description(++Node_element_list:list, -Node_description:string, ++Attr_key_list) is det
+% Node_description is the node description found in Node_element_list
+% where Attr_key_list is used to 
+% 
+% @arg Node_element_list list of elements describing the node
+% @arg Node_description description for the node
+% @arg Attr_key_list list of attribute keys to be used for reference
+node_description(Node_element_list, Node_description, Attr_key_list) :-
+    memberchk(key(node, description, Key_node_description), Attr_key_list),
+    data(Key_node_description, Node_element_list, [Node_description]), !.
+
+node_description(_, "", _).
+
+
+%! node_label(++Node_element_list:list, -Node_label:string, ++Attr_key_list:list) is det
+% Node_label is the node label found in Node_element_list
+% where Attr_key_list is used to 
+%
+% @arg Node_element_list list of elements describing the node
+% @arg Node_label label for the node
+% @arg Attr_key_list list of attribute keys to be used for reference
+node_label(Node_element_list, Node_label, Attr_key_list) :-
+    memberchk(key(node, nodegraphics, Key_nodegraphics), Attr_key_list),
+    (
+        data(Key_nodegraphics, Node_element_list, Nodegraphics_elements),
+        member(element('y:ImageNode', _Image_props, Image_elements ), Nodegraphics_elements),
+        member(element('y:NodeLabel', _Label_props, [Node_label]), Image_elements)
+    ;   Node_label = ""
+    ),
+    !.
 
 
 %! data(+Key_id:atom, ++Element_list:list, -Sub_element_list:list) is nondet
