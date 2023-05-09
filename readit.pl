@@ -104,16 +104,17 @@ interpret_graph_element(
     member(Edge_label, Label_elements), atomic(Edge_label).
 
 
-%! data(+Key:atom, ++Elements, -Sub_elements) is det
-% Extract the Sub_elements content from a data element in Elements with a given Key
+%! data(+Key_id:atom, ++Element_list:list, -Sub_element_list:list) is nondet
+% Sub_element_list is the list of sub_elements
+% of an element within Element_list
+% of type 'data' and key=Key_id
 %
-% @arg Key used to select the desired data element
-% @arg Elements list of elements to search data from
-% @arg Sub_elements content of the data element in Elements with the given Key
-data(Key, Elements, Sub_elements) :-
-    member(element(data, Props, Sub_elements), Elements),
-    member(key=Key, Props),
-    !.
+% @arg Key_id of the data searched for
+% @arg Element_list list of elements among which to search for a data element
+% @arg Sub_element_list content of the data element in Element_list with the given Key_id
+data(Key_id, Element_list, Sub_element_list) :-
+    member(element(data, Props, Sub_element_list), Element_list),
+    member(key=Key_id, Props).
 
 
 %! element_attribute(?Element_type, ?Attr_name) is nondet
