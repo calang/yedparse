@@ -1,6 +1,8 @@
-/** <module> readit - Read graph information from a yEd graphml file
+/** <module> read_graphml - Read graph information from a yEd graphml file
  * 
- * Extraction of features from a yEd graphml file, using SWI Prolog.
+ * Extracts nodes with label and description, edges with label,
+ * from a yEd graphml file,
+ * using SWI-Prolog.
  * 
  * @author Carlos Lang-Sanou
  */
