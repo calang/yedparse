@@ -50,7 +50,7 @@ new_node(node{id:_, label:_, description:_}).
 
 %! new_edge(Edge_dict) is det.
 % defines the structure of an edge dict
-new_edge(edge{id:_, source:_, target:_, label:_}).
+new_edge(edge{id:_, source_id:_, target_id:_, label:_}).
 
 
 %! graphml_term_list(++Graph_element:term, -Term_list:list) is det
@@ -107,14 +107,13 @@ graph_element_term(
     element(edge, Edge_props, Edge_elements),
     Attr_key_list,
     Edge
-    % edge(Edge_id, Source_id, Target_id, Edge_label)
 ) :- !,
     memberchk(id=Edge_id, Edge_props),
     memberchk(source=Source_id, Edge_props),
     memberchk(target=Target_id, Edge_props),
     edge_label(Edge_elements, Edge_label, Attr_key_list),
     new_edge(Edge),
-    Edge.id = Edge_id, Edge.source = Source_id, Edge.target = Target_id, Edge.label = Edge_label.
+    Edge.id = Edge_id, Edge.source_id = Source_id, Edge.target_id = Target_id, Edge.label = Edge_label.
 
 
 %! node_description(++Node_element_list:list, -Node_description:string, ++Attr_key_list) is det
