@@ -26,20 +26,12 @@ run :-
     !.
 
 
-%! graphml_term_list(++Element:term) is det
-% Interpret the parsed Element structure for the whole graphml file.
+%! graphml_term_list(++Graph_element:term, -Term_list:list) is det
+% Term_list is the list of terms for Graph_element
 %
-% @arg Element term of the form element(graphml, _Graphml_prop_list, Element_list)
+% @arg Graph_element term of the form element(graphml, _Graphml_prop_list, Element_list)
+% @arg Term_list list of corresponding list of terms for the given graph.
 graphml_term_list( element(graphml, _Graphml_prop_list, Element_list), Term_list ) :-
-    element_list_term_list(Element_list, Term_list).
-
-
-%! element_list_term_list(++Element_list:list,-Term_list:list) is det
-% Term_list is the list of terms that correspond to Element_list.
-%
-% @arg Element_list - list of graphml elements
-% @arg Term_list list of terms extracted from the graphml
-element_list_term_list(Element_list, Term_list) :-
     keys(Element_list, Key_list),
     memberchk(element(graph, _Graph_prop_list, Graph_element_list), Element_list),
     element_list_term_list(Graph_element_list, Key_list, Term_list).
@@ -63,12 +55,13 @@ element_list_term_list(Element_list, Attr_key_list, Term_list) :-
     ).
 
 
-%! graph_element_term( ++Element:term, ++Attr_key_list:list, -Term ) is det.
+%! graph_element_term( ++Element:term, ++Attr_key_list:list, -Term ) is det
 % Term is the term that corresponds to Element.
 %
 % @arg Element graph element
 % @arg Attr_key_list list of element attribute keys of the form key(From, Attr, Key)
 % @arg Term term corresponding to Element
+
 % node(Node_id:atom, Node_label:string, Node_description:string)
 graph_element_term(
     element(node, Node_props, Node_elements),
@@ -144,7 +137,7 @@ keys(Elements, Keys) :-
     ).
 
 
-%! key(++Element_list:list, +Element_type:atom, +Attr_name:atom, -Key_id:atom) is det.
+%! key(++Element_list:list, +Element_type:atom, +Attr_name:atom, -Key_id:atom) is det
 % Key_id is used for the Attr_name of the Element_type.
 %
 % @arg Element_list list of graphml elements
