@@ -6,21 +6,28 @@
  */
 
 
-%! dump_graph is det
-% Write the parsed structure of the whole graphml file onto a file called 'graph.pl'
-dump_graph :-
-    load_html('basic.graphml', Graphml, []),
-    open('graph.pl', write, Out),
+%! dump_graph(+File_basename:atom) is det
+% Read the file File_basename.graphml and write the parsed structure into File_basename.pl
+%
+% @arg File_basename base-name filename without its file extension 
+dump_graph(Base_name) :-
+    atomic_list_concat([Base_name, '.graphml'], Graphfile),
+    atomic_list_concat([Base_name, '.pl'], PLfile),
+    load_html(Graphfile, Graphml, []),
+    open(PLfile, write, Out),
         print_term(Graphml, [output(Out)]),
         writeln(Out, '.'),
         flush_output(Out),
     close(Out).
 
 
-%! run is det
-% Load the file and print the graph information.
-run :-
-    load_html('basic.graphml', [Graphml], []),
+%! run(+File_basename:atom) is det
+% Read the file File_basename.graphml and print the corresponding list of terms
+%
+% @arg File_basename base-name filename without its file extension 
+run(Base_name) :-
+    atomic_list_concat([Base_name, '.graphml'], Graphfile),
+    load_html(Graphfile, [Graphml], []),
     graphml_term_list(Graphml, Term_list),
     print_term(Term_list, []),
     !.
