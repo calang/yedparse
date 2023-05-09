@@ -12,7 +12,8 @@ dump_graph :-
     load_html('basic.graphml', Graphml, []),
     open('graph.pl', write, Out),
         print_term(Graphml, [output(Out)]),
-        flush_output(Out),    
+        writeln(Out, '.'),
+        flush_output(Out),
     close(Out).
 
 
@@ -115,42 +116,46 @@ data(Key, Elements, Sub_elements) :-
     !.
 
 
-%! keys(++Elements:list, -Keys:list) is det
-% Extract Keys of interest from Elements
+%! element_attribute(?Element_type, ?Attr_name) is nondet
+% Attr_name is the name of an attribute of interest for elements of type Element_type
 %
-% @arg Elements list of elements to pull keys from
-% @arg Keys list of terms key(For, Attr, Key)
+% @arg Element_type type of element
+% @arg Attr_name name of the attribute 
+element_attribute(node, nodegraphics).
+element_attribute(node, description).
+element_attribute(edge, edgegraphics).
+element_attribute(edge, description).
+
+
+%! keys(++Element_list:list, -Key_list:list) is det
+% Key_list is the list of terms of form key(element_type, attribute_name, key_id),
+% corresponding to elements in Element_list which define key_ids
+%
+% @arg Element_list list of elements to pull keys from
+% @arg Key_list list of terms of the form key(element_type, attribute_name, key_id)
 keys(Elements, Keys) :-
     findall(
-        key(For, Attr, Key),
+        key(For, Attr, Key_id),
         (
-            member(
-                (For, Attr),
-                [
-                    (node, nodegraphics)
-                    ,(node, description)
-                    ,(edge, edgegraphics)
-                    ,(edge, description)
-                ]
-            ),
-            key(Elements, For, Attr, Key)
+            element_attribute(For, Attr),
+            key(Elements, For, Attr, Key_id)
         ),
         Keys
     ).
 
 
-%! key(++Elements:list, +For:atom, +Attr_name:atom, -Key) is det.
-% Extract the Key used for the Attr_name of the For type of element.
+%! key(++Element_list:list, +Element_type:atom, +Attr_name:atom, -Key_id:atom) is det.
+% Key_id is used for the Attr_name of the Element_type.
 %
-% @arg Elements list of graphml elements
-% @arg For type of element as described in its propertied
-% @arg Attr_name name of the attribute of interest
-% @arg Key used for the corresponding For type of element and given Attr_name
-key(Elements, For, Attr_name, Key) :-
-    member(element(key, Key_props, _), Elements),
-    member(for=For, Key_props),
+% @arg Element_list list of graphml elements
+% @arg Element_type type of element
+% @arg Attr_name name of the attribute
+% @arg Key_id used for the corresponding Element_type and Attr_name
+key(Element_list, Element_type, Attr_name, Key_id) :-
+    member(element(key, Key_props, _), Element_list),
+    member(for=Element_type, Key_props),
     (   member('attr.name'=Attr_name, Key_props)
     ;   member('yfiles.type'=Attr_name, Key_props)
     ),
-    member(id=Key, Key_props),
+    member(id=Key_id, Key_props),
     !.
