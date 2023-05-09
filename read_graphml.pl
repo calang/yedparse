@@ -44,6 +44,15 @@ run(Base_name) :-
     !.
 
 
+%! new_node(Node_dict) is det.
+% defines the structure of a node dict
+new_node(node{id:_, label:_, description:_}).
+
+%! new_edge(Edge_dict) is det.
+% defines the structure of an edge dict
+new_edge(edge{id:_, source:_, target:_, label:_}).
+
+
 %! graphml_term_list(++Graph_element:term, -Term_list:list) is det
 % Term_list is the list of terms for Graph_element
 %
@@ -84,23 +93,28 @@ element_list_term_list(Element_list, Attr_key_list, Term_list) :-
 graph_element_term(
     element(node, Node_props, Node_elements),
     Attr_key_list,
-    node(Node_id, Node_label, Node_description)
+    Node
 ) :- !,
     memberchk(id=Node_id, Node_props),
     node_description(Node_elements, Node_description, Attr_key_list),
-    node_label(Node_elements, Node_label, Attr_key_list).
+    node_label(Node_elements, Node_label, Attr_key_list),
+    new_node(Node),
+    Node.id = Node_id, Node.label = Node_label, Node.description = Node_description.
 
 
 % edge(Edge_id:atom, Source_id:atom, Target_id:atom, Edge_label:string)
 graph_element_term(
     element(edge, Edge_props, Edge_elements),
     Attr_key_list,
-    edge(Edge_id, Source_id, Target_id, Edge_label)
+    Edge
+    % edge(Edge_id, Source_id, Target_id, Edge_label)
 ) :- !,
     memberchk(id=Edge_id, Edge_props),
     memberchk(source=Source_id, Edge_props),
     memberchk(target=Target_id, Edge_props),
-    edge_label(Edge_elements, Edge_label, Attr_key_list).
+    edge_label(Edge_elements, Edge_label, Attr_key_list),
+    new_edge(Edge),
+    Edge.id = Edge_id, Edge.source = Source_id, Edge.target = Target_id, Edge.label = Edge_label.
 
 
 %! node_description(++Node_element_list:list, -Node_description:string, ++Attr_key_list) is det
