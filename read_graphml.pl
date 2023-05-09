@@ -5,6 +5,19 @@
  * @author Carlos Lang-Sanou
  */
 
+ :- module(read_graphml, [read_graphml/2]).
+
+
+%! read_graphml(+File_basename:atom, -Term_list:list) is det
+% Read the file File_basename.graphml and produce the corresponding list of terms
+%
+% @arg File_basename base-name filename without its file extension 
+% @arg Term_list list of corresponding terms for the graph.
+read_graphml(Base_name, Term_list) :-
+    atomic_list_concat([Base_name, '.graphml'], Graphfile),
+    load_html(Graphfile, [Graphml], []),
+    graphml_term_list(Graphml, Term_list).
+
 
 %! dump_graph(+File_basename:atom) is det
 % Read the file File_basename.graphml and write the parsed structure into File_basename.pl
@@ -26,9 +39,7 @@ dump_graph(Base_name) :-
 %
 % @arg File_basename base-name filename without its file extension 
 run(Base_name) :-
-    atomic_list_concat([Base_name, '.graphml'], Graphfile),
-    load_html(Graphfile, [Graphml], []),
-    graphml_term_list(Graphml, Term_list),
+    read_graphml(Base_name, Term_list),
     print_term(Term_list, []),
     !.
 
