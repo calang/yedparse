@@ -29,11 +29,8 @@ For the extraction and interpretation, [SWI-Prolog](https://www.swi-prolog.org/)
 - very easy and effective manipulation of relationships
 - widely used in research, education and commercial applications
 
-## Assumptions
+## Assumptions / Limitations
 - The graph has a single level, with no layers or compound (grouped) nodes
-
-## Examples
-### basic.graphml, read by readit.pl
 
 ## To do
 - none
