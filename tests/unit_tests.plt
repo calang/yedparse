@@ -75,6 +75,6 @@ test(node_nolabel) :-
         node{description:con,id:n2,label:""},
         edge{id:e0,label:solves,source_id:n0,target_id:n1}    
     ].
-    
+
 
 :- end_tests(lists).
